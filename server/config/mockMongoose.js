@@ -12,9 +12,53 @@ const generateId = () => Math.random().toString(36).substring(2, 9) + Date.now()
 // Helper to deep clone
 const clone = (val) => JSON.parse(JSON.stringify(val));
 
+// Helper to wrap a document so it behaves like a Mongoose document
+const wrapMockDocument = (item, modelName) => {
+  if (!item) return null;
+  
+  Object.defineProperty(item, 'save', {
+    enumerable: false,
+    configurable: true,
+    writable: true,
+    value: async function() {
+      const fs = require('fs');
+      const path = require('path');
+      const DATA_DIR = path.join(__dirname, '../data');
+      const filePath = path.join(DATA_DIR, `${modelName.toLowerCase()}s.json`);
+      
+      let items = [];
+      if (fs.existsSync(filePath)) {
+        items = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      }
+      
+      const index = items.findIndex(x => x._id === this._id.toString());
+      
+      // Clean clone without functions
+      const itemToWrite = {};
+      for (const k of Object.keys(this)) {
+        if (typeof this[k] !== 'function') {
+          itemToWrite[k] = this[k];
+        }
+      }
+      
+      if (index >= 0) {
+        items[index] = itemToWrite;
+      } else {
+        items.push(itemToWrite);
+      }
+      
+      fs.writeFileSync(filePath, JSON.stringify(items, null, 2));
+      return this;
+    }
+  });
+  
+  return item;
+};
+
 class Query {
-  constructor(data, isSingle = false) {
+  constructor(data, modelName, isSingle = false) {
     this._data = clone(data);
+    this._modelName = modelName;
     this._isSingle = isSingle;
     this._populateOptions = [];
     this._sortOption = null;
@@ -96,9 +140,10 @@ class Query {
     }
 
     if (this._isSingle) {
-      return result.length > 0 ? result[0] : null;
+      const item = result.length > 0 ? result[0] : null;
+      return this._modelName ? wrapMockDocument(item, this._modelName) : item;
     }
-    return result;
+    return this._modelName ? result.map(item => wrapMockDocument(item, this._modelName)) : result;
   }
 
   // Thenable interface so it can be directly awaited
@@ -171,13 +216,13 @@ class MockModel {
   find(query = {}) {
     const items = this._read();
     const filtered = items.filter(item => this._matches(item, query));
-    return new Query(filtered);
+    return new Query(filtered, this.modelName);
   }
 
   findOne(query = {}) {
     const items = this._read();
     const filtered = items.filter(item => this._matches(item, query));
-    return new Query(filtered, true);
+    return new Query(filtered, this.modelName, true);
   }
 
   findById(id) {
@@ -195,7 +240,7 @@ class MockModel {
     };
     items.push(newItem);
     this._write(items);
-    return newItem;
+    return wrapMockDocument(newItem, this.modelName);
   }
 
   async deleteOne(query) {
