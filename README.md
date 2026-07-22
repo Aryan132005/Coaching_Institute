@@ -4,9 +4,8 @@ A complete, production-ready full-stack website and administration management po
 
 ---
 
-## ═══════════════════════════════════════
 ## ARCHITECTURE & TECH STACK
-## ═══════════════════════════════════════
+
 - **Frontend**: React (Vite) + Tailwind CSS + React Router + Lucide Icons + React Context API
 - **Backend**: Node.js + Express.js + REST API architecture
 - **Database**: MongoDB with Mongoose ODM (runs locally or via Atlas)
@@ -16,9 +15,7 @@ A complete, production-ready full-stack website and administration management po
 
 ---
 
-## ═══════════════════════════════════════
 ## FOLDER STRUCTURE
-## ═══════════════════════════════════════
 ```
 coaching-institute/
 ├── client/                  # React frontend (Vite)
@@ -47,9 +44,7 @@ coaching-institute/
 
 ---
 
-## ═══════════════════════════════════════
 ## SETUP & INSTALLATION
-## ═══════════════════════════════════════
 
 ### Prerequisite
 Ensure [Node.js](https://nodejs.org/) is installed on your computer.
@@ -89,9 +84,7 @@ npm install
 
 ---
 
-## ═══════════════════════════════════════
 ## RUNNING THE WEB APPLICATION
-## ═══════════════════════════════════════
 
 ### Start Express Server (Backend)
 ```bash
@@ -109,9 +102,8 @@ npm run dev
 
 ---
 
-## ═══════════════════════════════════════
 ## FEATURES & BONUS IMPLEMENTATIONS
-## ═══════════════════════════════════════
+
 1. **Dark Mode Toggle**: Integrated theme switcher directly inside the main navigation bar. Remembers preference via `localStorage`.
 2. **Adaptive DB Dynamic Proxy**: Detects active MongoDB connections on boot; automatically proxies all Mongoose models to JSON file store if database is offline.
 3. **Counselor Resolution Log**: Allows administrators to view contact enquiries and toggle resolved status with dynamic visual cues.
