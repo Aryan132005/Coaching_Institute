@@ -87,7 +87,7 @@ const seedData = async () => {
     console.log('Faculty profiles seeded.');
 
     // 3. Create Courses
-    const courses = await Course.insertMany([
+        const courses = await Course.insertMany([
       {
         title: 'JEE Main & Advanced Crackers Program',
         description: 'Comprehensive 2-year classroom/online coaching program for JEE aspirants. Includes daily lectures, exhaustive study material, and weekly test series aligned with latest pattern.',
@@ -127,6 +127,76 @@ const seedData = async () => {
         faculty: 'Guest Faculty & Officers',
         seatsAvailable: 60,
         image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&q=80',
+      },
+      {
+        title: 'GATE Computer Science & IT Special',
+        description: 'Targeted program for GATE aspirants focusing on Data Structures, Algorithms, Theory of Computation, Compiler Design, and Operating Systems.',
+        duration: '1 Year',
+        fees: 60000,
+        category: 'Engineering',
+        faculty: 'Anjali Desai, Prof. Sarah Jenkins',
+        seatsAvailable: 25,
+        image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&q=80',
+      },
+      {
+        title: 'Data Science & Machine Learning Bootcamp',
+        description: 'Learn Python, Pandas, NumPy, Scikit-Learn, TensorFlow, and SQL. Build predictive models, run experiments, and deploy machine learning APIs.',
+        duration: '6 Months',
+        fees: 55000,
+        category: 'Technology',
+        faculty: 'Anjali Desai',
+        seatsAvailable: 25,
+        image: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=500&q=80',
+      },
+      {
+        title: 'Cybersecurity & Ethical Hacking Basics',
+        description: 'Learn network security, Linux administration, vulnerability scanning, penetration testing, and basic security operations center standards.',
+        duration: '4 Months',
+        fees: 35000,
+        category: 'Technology',
+        faculty: 'Guest Cyber Specialists',
+        seatsAvailable: 20,
+        image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&q=80',
+      },
+      {
+        title: 'Advanced SAT Prep Course',
+        description: 'Get ready for your college board SATs. Covers critical reading, grammar, writing essays, math strategies, and high-frequency vocabulary lessons.',
+        duration: '3 Months',
+        fees: 25000,
+        category: 'General Studies',
+        faculty: 'Prof. Sarah Jenkins',
+        seatsAvailable: 35,
+        image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500&q=80',
+      },
+      {
+        title: 'IIT JAM Chemistry Specialized Prep',
+        description: 'Advanced chemistry prep covering Organic mechanisms, Inorganic structures, Physical calculations, and laboratory review sessions.',
+        duration: '1 Year',
+        fees: 75000,
+        category: 'Medical',
+        faculty: 'Dr. Vikram Malhotra',
+        seatsAvailable: 30,
+        image: 'https://images.unsplash.com/photo-1532187863486-abf9d39d66e8?w=500&q=80',
+      },
+      {
+        title: 'UPSC Mains Answer Writing Special',
+        description: 'Dedicated writing practice covering General Studies I-IV, essay layouts, formatting facts, officer evaluations, and review updates.',
+        duration: '6 Months',
+        fees: 40000,
+        category: 'Civil Services',
+        faculty: 'Guest Officers',
+        seatsAvailable: 45,
+        image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=500&q=80',
+      },
+      {
+        title: 'Advanced Java, DSA & Algorithms',
+        description: 'Master Object-Oriented programming in Java, standard data structures (trees, graphs, heaps), dynamic programming, and interview questions.',
+        duration: '4 Months',
+        fees: 30000,
+        category: 'Technology',
+        faculty: 'Anjali Desai',
+        seatsAvailable: 30,
+        image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=500&q=80',
       }
     ]);
 
