@@ -33,6 +33,22 @@ Content-Type: application/json
 GET {{baseUrl}}/auth/me
 Authorization: Bearer {{studentToken}}
 
+### 3a. Forgot Password Request
+POST {{baseUrl}}/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "student@coaching.com"
+}
+
+### 3b. Reset Password (replace token with the value generated in terminal logs)
+POST {{baseUrl}}/auth/reset-password/paste-random-token-here
+Content-Type: application/json
+
+{
+  "password": "newstudentpassword123"
+}
+
 ### 4. Register Admin
 # @name registerAdmin
 POST {{baseUrl}}/auth/register

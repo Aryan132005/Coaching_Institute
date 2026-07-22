@@ -1,5 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 const User = require('../models/user');
 
 // Helper to generate JWT
@@ -94,8 +96,118 @@ const getMe = async (req, res, next) => {
   }
 };
 
+// @desc    Request Password Reset Link
+// @route   POST /api/auth/forgot-password
+// @access  Public
+const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      res.status(404);
+      throw new Error('User not found with this email');
+    }
+
+    // Generate random token
+    const resetToken = crypto.randomBytes(20).toString('hex');
+
+    // Save token and expiry
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+    await user.save();
+
+    // Reset Link URL
+    const resetUrl = `${req.protocol}://${req.get('host').replace('5000', '5173')}/reset-password/${resetToken}`;
+
+    // Send email via nodemailer
+    const emailUser = process.env.EMAIL_USER;
+    const emailPass = process.env.EMAIL_PASS;
+
+    if (!emailUser || !emailPass) {
+      console.warn('[RESET PASSWORD WARNING] EMAIL_USER or EMAIL_PASS not configured in .env. Logging reset link details below:');
+      console.log(`
+      --------------------------------------------------
+      [RESET PASSWORD LINK FOR: ${user.email}]
+      URL: ${resetUrl}
+      --------------------------------------------------
+      `);
+      return res.json({
+        message: 'Password reset link generated. Since email service is not configured, please check the server terminal console log for the link.',
+      });
+    }
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: emailUser,
+        pass: emailPass,
+      },
+    });
+
+    const mailOptions = {
+      from: `"Apex Academy Portal" <${emailUser}>`,
+      to: user.email,
+      subject: 'Apex Academy - Password Reset Request',
+      text: `Hello ${user.name},\n\nYou requested a password reset. Please click on the link below to set a new password:\n\n${resetUrl}\n\nThis link is valid for 1 hour.\n\nIf you did not request this, please ignore this email.\n\nBest regards,\nApex Academy System`,
+      html: `
+        <h3>Password Reset Request</h3>
+        <p>Hello ${user.name},</p>
+        <p>You requested a password reset. Please click on the link below to set a new password:</p>
+        <p><a href="${resetUrl}" target="_blank" style="padding: 10px 20px; background-color: #0e91eb; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Reset Password</a></p>
+        <p>Or copy and paste this URL into your browser:</p>
+        <p>${resetUrl}</p>
+        <p>This link is valid for 1 hour.</p>
+        <br/>
+        <p>If you did not request this, please ignore this email.</p>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.json({ message: 'Password reset link sent to your email.' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Reset Password using token
+// @route   POST /api/auth/reset-password/:token
+// @access  Public
+const resetPassword = async (req, res, next) => {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      res.status(400);
+      throw new Error('Invalid or expired password reset token');
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Update fields
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.json({ message: 'Password updated successfully! You can now log in.' });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
   getMe,
+  forgotPassword,
+  resetPassword,
 };

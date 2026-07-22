@@ -20,5 +20,16 @@
     "createdAt": "2026-07-22T05:33:56.915Z",
     "appliedAt": "2026-07-22T05:33:56.915Z",
     "date": "2026-07-22T05:33:56.915Z"
+  },
+  {
+    "_id": "beyj427mrvnizxj",
+    "name": "Aryan Saini",
+    "email": "aryansaini132005@gmail.com",
+    "password": "$2a$10$9ee/yrTmFpHIXHrUUrc0HO47J77vN4ewA6pScFPeGxJ82VYdkL5ry",
+    "role": "student",
+    "phone": "6378313645",
+    "createdAt": "2026-07-22T05:38:22.183Z",
+    "appliedAt": "2026-07-22T05:38:22.183Z",
+    "date": "2026-07-22T05:38:22.183Z"
   }
 ]

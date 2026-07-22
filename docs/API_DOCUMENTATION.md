@@ -72,6 +72,40 @@ All API endpoints reside under the `/api` prefix. The base development server ru
 }
 ```
 
+### Request Password Reset Link
+* **URL:** `/auth/forgot-password`
+* **Method:** `POST`
+* **Access:** Public
+* **Payload:**
+```json
+{
+  "email": "student@coaching.com"
+}
+```
+* **Response (200 OK):**
+```json
+{
+  "message": "Password reset link sent to your email."
+}
+```
+
+### Reset Password using token
+* **URL:** `/auth/reset-password/:token`
+* **Method:** `POST`
+* **Access:** Public
+* **Payload:**
+```json
+{
+  "password": "newpassword123"
+}
+```
+* **Response (200 OK):**
+```json
+{
+  "message": "Password updated successfully! You can now log in."
+}
+```
+
 ---
 
 ## 2. Course Program Endpoints
