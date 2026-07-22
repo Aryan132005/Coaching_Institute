@@ -1,0 +1,255 @@
+# Apex Academy Coaching Institute - API Request Testing
+# Use VSCode REST Client extension to run these queries
+
+@baseUrl = http://localhost:5000/api
+
+### 1. Register Student
+# @name registerStudent
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Jane Miller",
+  "email": "jane@gmail.com",
+  "password": "studentpassword",
+  "phone": "9876543211",
+  "role": "student"
+}
+
+### 2. Login Student (Get Auth Token)
+# @name loginStudent
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "student@coaching.com",
+  "password": "student123"
+}
+
+### Save Student Token Variable
+@studentToken = {{loginStudent.response.body.token}}
+
+### 3. Get Student Profile
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{studentToken}}
+
+### 4. Register Admin
+# @name registerAdmin
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Super Admin",
+  "email": "superadmin@coaching.com",
+  "password": "adminsecurekey",
+  "phone": "9999888877",
+  "role": "admin"
+}
+
+### 5. Login Admin
+# @name loginAdmin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@coaching.com",
+  "password": "admin123"
+}
+
+### Save Admin Token Variable
+@adminToken = {{loginAdmin.response.body.token}}
+
+### 6. Get Admin Profile
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{adminToken}}
+
+### 7. Get All Courses (Public)
+GET {{baseUrl}}/courses
+
+### 8. Search Courses (Public)
+GET {{baseUrl}}/courses?search=bootcamp
+
+### 9. Get Course by ID (Public)
+GET {{baseUrl}}/courses/668ec0000000000000000001
+
+### 10. Create New Course (Admin Only)
+# @name createCourse
+POST {{baseUrl}}/courses
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "title": "Machine Learning & AI Masterclass",
+  "description": "An advanced 12-month program covering Deep Learning, NLP, Computer Vision, and Generative AI, featuring industry capstones.",
+  "duration": "12 Months",
+  "fees": 85000,
+  "category": "Technology",
+  "faculty": "Anjali Desai",
+  "seatsAvailable": 25,
+  "image": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=500&q=80"
+}
+
+### Save Created Course ID
+@courseId = {{createCourse.response.body._id}}
+
+### 11. Update Course (Admin Only)
+PUT {{baseUrl}}/courses/{{courseId}}
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "title": "Applied Machine Learning & AI Masterclass",
+  "description": "Deep Learning, NLP, Generative AI models, and MLOps engineering practices.",
+  "duration": "12 Months",
+  "fees": 89000,
+  "category": "Technology",
+  "faculty": "Anjali Desai",
+  "seatsAvailable": 20,
+  "image": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=500&q=80"
+}
+
+### 12. Delete Course (Admin Only)
+DELETE {{baseUrl}}/courses/{{courseId}}
+Authorization: Bearer {{adminToken}}
+
+
+### 13. Submit Admission Application (Student)
+POST {{baseUrl}}/admissions
+Content-Type: application/json
+Authorization: Bearer {{studentToken}}
+
+{
+  "studentName": "John Doe",
+  "email": "student@coaching.com",
+  "phone": "8888888888",
+  "courseId": "668ec0000000000000000001",
+  "documents": "Google Drive Link: drive.google.com/test-id-cert"
+}
+
+### 14. Get All Admissions (Admin Only)
+# @name getAdmissions
+GET {{baseUrl}}/admissions
+Authorization: Bearer {{adminToken}}
+
+### Save Admission ID Variable
+@admissionId = {{getAdmissions.response.body[0]._id}}
+
+### 15. Approve Admission Application (Admin Only)
+PUT {{baseUrl}}/admissions/{{admissionId}}/status
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "status": "approved"
+}
+
+### 16. Get My Admissions (Student)
+GET {{baseUrl}}/admissions/my
+Authorization: Bearer {{studentToken}}
+
+
+### 17. Submit Enquiry Form (Public)
+POST {{baseUrl}}/enquiries
+Content-Type: application/json
+
+{
+  "name": "Sarah Connor",
+  "email": "sarah@gmail.com",
+  "phone": "9999900000",
+  "message": "When will the scholarship SAT exam details be shared via email?"
+}
+
+### 18. Get All Enquiries (Admin Only)
+# @name getEnquiries
+GET {{baseUrl}}/enquiries
+Authorization: Bearer {{adminToken}}
+
+### Save Enquiry ID Variable
+@enquiryId = {{getEnquiries.response.body[0]._id}}
+
+### 19. Resolve Enquiry (Admin Only)
+PUT {{baseUrl}}/enquiries/{{enquiryId}}/status
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "status": "resolved"
+}
+
+### 20. Get My Enquiries (Student)
+GET {{baseUrl}}/enquiries/my
+Authorization: Bearer {{studentToken}}
+
+
+### 21. Get All Announcements (Public)
+GET {{baseUrl}}/announcements
+
+### 22. Post Announcement (Admin Only)
+# @name postAnnouncement
+POST {{baseUrl}}/announcements
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "title": "Independence Day Holiday Notice",
+  "description": "Apex Academy will remain closed on August 15th, 2026. Online mock tests scheduled for JEE & NEET will commence on August 16th.",
+  "isActive": true
+}
+
+### Save Notice ID
+@noticeId = {{postAnnouncement.response.body._id}}
+
+### 23. Update Announcement (Admin Only)
+PUT {{baseUrl}}/announcements/{{noticeId}}
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "title": "Independence Day Holiday Notice (Update)",
+  "description": "The campus will remain closed on August 15th, 2026. Direct counselling support available online.",
+  "isActive": true
+}
+
+### 24. Delete Announcement (Admin Only)
+DELETE {{baseUrl}}/announcements/{{noticeId}}
+Authorization: Bearer {{adminToken}}
+
+
+### 25. Get All Faculty Profiles (Public)
+GET {{baseUrl}}/faculty
+
+### 26. Create Faculty Profile (Admin Only)
+# @name createFaculty
+POST {{baseUrl}}/faculty
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "name": "Prof. Alan Turing",
+  "subject": "Computer Science",
+  "qualification": "Ph.D. in Computer Science (Princeton)",
+  "experience": 20,
+  "photo": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&q=80",
+  "bio": "Alan specializes in Computability, AI principles, and Cryptography algorithms. He guides upper-grade computer bootcamps."
+}
+
+### Save Faculty ID
+@facultyId = {{createFaculty.response.body._id}}
+
+### 27. Update Faculty (Admin Only)
+PUT {{baseUrl}}/faculty/{{facultyId}}
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "name": "Prof. Alan M. Turing",
+  "subject": "Theoretical Computer Science",
+  "qualification": "Ph.D. in CS & Math (Princeton)",
+  "experience": 21,
+  "photo": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&q=80",
+  "bio": "Alan specializes in Computability, Machine Learning principles, and Cryptography algorithms."
+}
+
+### 28. Delete Faculty (Admin Only)
+DELETE {{baseUrl}}/faculty/{{facultyId}}
+Authorization: Bearer {{adminToken}}

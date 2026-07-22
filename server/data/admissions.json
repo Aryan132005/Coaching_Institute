@@ -1,0 +1,14 @@
+[
+  {
+    "_id": "qin9f3kmrvlwpl1",
+    "studentName": "John Doe",
+    "email": "student@coaching.com",
+    "phone": "8888888888",
+    "courseId": "je92ku0mrvlwpl0",
+    "documents": "Mock High School Certificate.pdf",
+    "status": "pending",
+    "createdAt": "2026-07-22T04:53:02.725Z",
+    "appliedAt": "2026-07-22T04:53:02.726Z",
+    "date": "2026-07-22T04:53:02.726Z"
+  }
+]

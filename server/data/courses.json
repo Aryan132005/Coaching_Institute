@@ -1,0 +1,58 @@
+[
+  {
+    "_id": "je92ku0mrvlwpl0",
+    "title": "JEE Main & Advanced Crackers Program",
+    "description": "Comprehensive 2-year classroom/online coaching program for JEE aspirants. Includes daily lectures, exhaustive study material, and weekly test series aligned with latest pattern.",
+    "duration": "2 Years",
+    "fees": 150000,
+    "category": "Engineering",
+    "faculty": "Dr. Ramesh Sharma, Prof. Sarah Jenkins, Dr. Vikram Malhotra",
+    "seatsAvailable": 50,
+    "image": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&q=80",
+    "createdAt": "2026-07-22T04:53:02.724Z",
+    "appliedAt": "2026-07-22T04:53:02.724Z",
+    "date": "2026-07-22T04:53:02.724Z"
+  },
+  {
+    "_id": "yzspso5mrvlwpl0",
+    "title": "NEET Premium Achievers Program",
+    "description": "Elite coaching program focusing on Biology, Physics, and Chemistry. Features regular mock tests, performance diagnostics, and dedicated doubt solving sessions.",
+    "duration": "1 Year",
+    "fees": 95000,
+    "category": "Medical",
+    "faculty": "Dr. Ramesh Sharma, Dr. Vikram Malhotra",
+    "seatsAvailable": 40,
+    "image": "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=500&q=80",
+    "createdAt": "2026-07-22T04:53:02.724Z",
+    "appliedAt": "2026-07-22T04:53:02.724Z",
+    "date": "2026-07-22T04:53:02.724Z"
+  },
+  {
+    "_id": "vzkfzrymrvlwpl0",
+    "title": "Full Stack Web Development Bootcamp",
+    "description": "Job-oriented bootcamp training in HTML, CSS, JavaScript, React, Node.js, and MongoDB. Includes 5+ real-world projects and interview preparation.",
+    "duration": "6 Months",
+    "fees": 45000,
+    "category": "Technology",
+    "faculty": "Anjali Desai",
+    "seatsAvailable": 30,
+    "image": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&q=80",
+    "createdAt": "2026-07-22T04:53:02.724Z",
+    "appliedAt": "2026-07-22T04:53:02.724Z",
+    "date": "2026-07-22T04:53:02.724Z"
+  },
+  {
+    "_id": "8bblr4cmrvlwpl0",
+    "title": "UPSC Civil Services Foundation Program",
+    "description": "A structural approach to UPSC Civil Services preparation covering Prelims, Mains, and Essay papers, with emphasis on current affairs and answer writing practice.",
+    "duration": "1 Year",
+    "fees": 110000,
+    "category": "Civil Services",
+    "faculty": "Guest Faculty & Officers",
+    "seatsAvailable": 60,
+    "image": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&q=80",
+    "createdAt": "2026-07-22T04:53:02.724Z",
+    "appliedAt": "2026-07-22T04:53:02.724Z",
+    "date": "2026-07-22T04:53:02.724Z"
+  }
+]
