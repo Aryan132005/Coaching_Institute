@@ -15,9 +15,11 @@
     "express": "^4.19.2",
     "express-validator": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.4.1",
     "morgan": "^1.10.0",
-    "nodemailer": "^9.0.3"
+    "mysql2": "^3.23.1",
+    "nodemailer": "^9.0.3",
+    "sequelize": "^6.37.8",
+    "sqlite3": "^6.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.3"

@@ -1,32 +1,38 @@
-const mongoose = require('mongoose');
-const { getModel } = require('../config/db');
+const { DataTypes } = require('sequelize');
 
-const FacultySchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  subject: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  qualification: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  experience: {
-    type: Number,
-    required: true,
-  },
-  photo: {
-    type: String,
-  },
-  bio: {
-    type: String,
-  },
-});
-
-module.exports = getModel('Faculty', FacultySchema);
+module.exports = (sequelize) => {
+  return sequelize.define('Faculty', {
+    _id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      field: 'id',
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    subject: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    qualification: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    experience: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    photo: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    bio: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+  }, {
+    tableName: 'faculties',
+  });
+};

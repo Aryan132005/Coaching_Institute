@@ -31,3 +31,9 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Databases
+*.sqlite
+*.sqlite3
+server/data/*.sqlite
+

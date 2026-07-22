@@ -1,11 +1,11 @@
-const Faculty = require('../models/faculty');
+const { Faculty } = require('../config/db');
 
 // @desc    Get all faculty members
 // @route   GET /api/faculty
 // @access  Public
 const getFaculty = async (req, res, next) => {
   try {
-    const faculty = await Faculty.find({});
+    const faculty = await Faculty.findAll();
     res.json(faculty);
   } catch (error) {
     next(error);
@@ -41,7 +41,7 @@ const updateFaculty = async (req, res, next) => {
   try {
     const { name, subject, qualification, experience, photo, bio } = req.body;
 
-    const faculty = await Faculty.findById(req.params.id);
+    const faculty = await Faculty.findByPk(req.params.id);
 
     if (faculty) {
       faculty.name = name || faculty.name;
@@ -67,10 +67,10 @@ const updateFaculty = async (req, res, next) => {
 // @access  Private/Admin
 const deleteFaculty = async (req, res, next) => {
   try {
-    const faculty = await Faculty.findById(req.params.id);
+    const faculty = await Faculty.findByPk(req.params.id);
 
     if (faculty) {
-      await Faculty.deleteOne({ _id: req.params.id });
+      await faculty.destroy();
       res.json({ message: 'Faculty profile removed successfully' });
     } else {
       res.status(404);

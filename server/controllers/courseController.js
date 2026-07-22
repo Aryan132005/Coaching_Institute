@@ -1,4 +1,5 @@
-const Course = require('../models/course');
+const { Op } = require('sequelize');
+const { Course } = require('../config/db');
 
 // @desc    Get all courses
 // @route   GET /api/courses
@@ -6,20 +7,25 @@ const Course = require('../models/course');
 const getCourses = async (req, res, next) => {
   try {
     const { category, search } = req.query;
-    let query = {};
+    let whereClause = {};
 
     if (category) {
-      query.category = { $regex: category, $options: 'i' };
+      whereClause.category = {
+        [Op.like]: `%${category}%`,
+      };
     }
 
     if (search) {
-      query.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
+      whereClause[Op.or] = [
+        { title: { [Op.like]: `%${search}%` } },
+        { description: { [Op.like]: `%${search}%` } },
       ];
     }
 
-    const courses = await Course.find(query).sort({ createdAt: -1 });
+    const courses = await Course.findAll({
+      where: whereClause,
+      order: [['createdAt', 'DESC']],
+    });
     res.json(courses);
   } catch (error) {
     next(error);
@@ -31,7 +37,7 @@ const getCourses = async (req, res, next) => {
 // @access  Public
 const getCourseById = async (req, res, next) => {
   try {
-    const course = await Course.findById(req.params.id);
+    const course = await Course.findByPk(req.params.id);
 
     if (course) {
       res.json(course);
@@ -51,7 +57,7 @@ const createCourse = async (req, res, next) => {
   try {
     const { title, description, duration, fees, category, faculty, seatsAvailable, image } = req.body;
 
-    const course = new Course({
+    const course = await Course.create({
       title,
       description,
       duration,
@@ -62,8 +68,7 @@ const createCourse = async (req, res, next) => {
       image: image || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&q=80',
     });
 
-    const createdCourse = await course.save();
-    res.status(201).json(createdCourse);
+    res.status(201).json(course);
   } catch (error) {
     next(error);
   }
@@ -76,7 +81,7 @@ const updateCourse = async (req, res, next) => {
   try {
     const { title, description, duration, fees, category, faculty, seatsAvailable, image } = req.body;
 
-    const course = await Course.findById(req.params.id);
+    const course = await Course.findByPk(req.params.id);
 
     if (course) {
       course.title = title || course.title;
@@ -104,10 +109,10 @@ const updateCourse = async (req, res, next) => {
 // @access  Private/Admin
 const deleteCourse = async (req, res, next) => {
   try {
-    const course = await Course.findById(req.params.id);
+    const course = await Course.findByPk(req.params.id);
 
     if (course) {
-      await Course.deleteOne({ _id: req.params.id });
+      await course.destroy();
       res.json({ message: 'Course removed successfully' });
     } else {
       res.status(404);

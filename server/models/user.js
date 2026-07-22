@@ -1,42 +1,46 @@
-const mongoose = require('mongoose');
-const { getModel } = require('../config/db');
+const { DataTypes } = require('sequelize');
 
-const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    lowercase: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  role: {
-    type: String,
-    enum: ['student', 'admin'],
-    default: 'student',
-  },
-  phone: {
-    type: String,
-    trim: true,
-  },
-  resetPasswordToken: {
-    type: String,
-  },
-  resetPasswordExpires: {
-    type: Date,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
-
-module.exports = getModel('User', UserSchema);
+module.exports = (sequelize) => {
+  return sequelize.define('User', {
+    _id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      field: 'id',
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
+      },
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    role: {
+      type: DataTypes.ENUM('student', 'admin'),
+      defaultValue: 'student',
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    resetPasswordToken: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    resetPasswordExpires: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+  }, {
+    tableName: 'users',
+  });
+};

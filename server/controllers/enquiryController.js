@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const Enquiry = require('../models/enquiry');
+const { Enquiry } = require('../config/db');
 
 // Helper to send email alerts to admin
 const sendEnquiryEmail = async (enquiry) => {
@@ -82,7 +82,7 @@ const submitEnquiry = async (req, res, next) => {
 // @access  Private/Admin
 const getEnquiries = async (req, res, next) => {
   try {
-    const enquiries = await Enquiry.find({}).sort({ createdAt: -1 });
+    const enquiries = await Enquiry.findAll({ order: [['createdAt', 'DESC']] });
     res.json(enquiries);
   } catch (error) {
     next(error);
@@ -94,7 +94,10 @@ const getEnquiries = async (req, res, next) => {
 // @access  Private (Student)
 const getMyEnquiries = async (req, res, next) => {
   try {
-    const enquiries = await Enquiry.find({ email: req.user.email }).sort({ createdAt: -1 });
+    const enquiries = await Enquiry.findAll({
+      where: { email: req.user.email },
+      order: [['createdAt', 'DESC']],
+    });
     res.json(enquiries);
   } catch (error) {
     next(error);
@@ -113,7 +116,7 @@ const updateEnquiryStatus = async (req, res, next) => {
       throw new Error('Invalid status. Must be pending or resolved');
     }
 
-    const enquiry = await Enquiry.findById(req.params.id);
+    const enquiry = await Enquiry.findByPk(req.params.id);
 
     if (enquiry) {
       enquiry.status = status;

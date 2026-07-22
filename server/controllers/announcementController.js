@@ -1,13 +1,21 @@
-const Announcement = require('../models/announcement');
+const { Announcement, User } = require('../config/db');
 
 // @desc    Get all announcements
 // @route   GET /api/announcements
 // @access  Public
 const getAnnouncements = async (req, res, next) => {
   try {
-    const announcements = await Announcement.find({ isActive: true })
-      .populate('postedBy', 'name')
-      .sort({ date: -1 });
+    const announcements = await Announcement.findAll({
+      where: { isActive: true },
+      include: [
+        {
+          model: User,
+          as: 'author',
+          attributes: ['name'],
+        },
+      ],
+      order: [['createdAt', 'DESC']],
+    });
     res.json(announcements);
   } catch (error) {
     next(error);
@@ -21,14 +29,13 @@ const createAnnouncement = async (req, res, next) => {
   try {
     const { title, description } = req.body;
 
-    const announcement = new Announcement({
+    const announcement = await Announcement.create({
       title,
       description,
-      postedBy: req.user._id,
+      postedBy: req.user.id,
     });
 
-    const createdAnnouncement = await announcement.save();
-    res.status(201).json(createdAnnouncement);
+    res.status(201).json(announcement);
   } catch (error) {
     next(error);
   }
@@ -41,7 +48,7 @@ const updateAnnouncement = async (req, res, next) => {
   try {
     const { title, description, isActive } = req.body;
 
-    const announcement = await Announcement.findById(req.params.id);
+    const announcement = await Announcement.findByPk(req.params.id);
 
     if (announcement) {
       announcement.title = title || announcement.title;
@@ -66,10 +73,10 @@ const updateAnnouncement = async (req, res, next) => {
 // @access  Private/Admin
 const deleteAnnouncement = async (req, res, next) => {
   try {
-    const announcement = await Announcement.findById(req.params.id);
+    const announcement = await Announcement.findByPk(req.params.id);
 
     if (announcement) {
-      await Announcement.deleteOne({ _id: req.params.id });
+      await announcement.destroy();
       res.json({ message: 'Announcement removed successfully' });
     } else {
       res.status(404);

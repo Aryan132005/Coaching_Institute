@@ -1,46 +1,47 @@
-const mongoose = require('mongoose');
-const { getModel } = require('../config/db');
+const { DataTypes } = require('sequelize');
 
-const CourseSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  duration: {
-    type: String,
-    required: true,
-  },
-  fees: {
-    type: Number,
-    required: true,
-  },
-  category: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  faculty: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  seatsAvailable: {
-    type: Number,
-    required: true,
-    default: 30,
-  },
-  image: {
-    type: String,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
-
-module.exports = getModel('Course', CourseSchema);
+module.exports = (sequelize) => {
+  return sequelize.define('Course', {
+    _id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      field: 'id',
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    duration: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    fees: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+    category: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    faculty: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    seatsAvailable: {
+      type: DataTypes.INTEGER,
+      defaultValue: 30,
+      allowNull: false,
+    },
+    image: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+  }, {
+    tableName: 'courses',
+  });
+};

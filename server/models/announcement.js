@@ -1,29 +1,31 @@
-const mongoose = require('mongoose');
-const { getModel } = require('../config/db');
+const { DataTypes } = require('sequelize');
 
-const AnnouncementSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
-  postedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  isActive: {
-    type: Boolean,
-    default: true,
-  },
-});
-
-module.exports = getModel('Announcement', AnnouncementSchema);
+module.exports = (sequelize) => {
+  return sequelize.define('Announcement', {
+    _id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      field: 'id',
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    postedBy: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+      allowNull: false,
+    },
+  }, {
+    tableName: 'announcements',
+  });
+};

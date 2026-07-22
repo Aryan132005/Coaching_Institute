@@ -2,7 +2,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
-const User = require('../models/user');
+const { Op } = require('sequelize');
+const { User } = require('../config/db');
 
 // Helper to generate JWT
 const generateToken = (id) => {
@@ -19,7 +20,7 @@ const registerUser = async (req, res, next) => {
     const { name, email, password, role, phone } = req.body;
 
     // Check if user already exists
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({ where: { email } });
     if (userExists) {
       res.status(400);
       throw new Error('User already exists');
@@ -64,7 +65,7 @@ const loginUser = async (req, res, next) => {
     const { email, password } = req.body;
 
     // Check for user email
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ where: { email } });
 
     if (user && (await bcrypt.compare(password, user.password))) {
       res.json({
@@ -89,7 +90,9 @@ const loginUser = async (req, res, next) => {
 // @access  Private
 const getMe = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user._id).select('-password');
+    const user = await User.findByPk(req.user._id, {
+      attributes: { exclude: ['password'] }
+    });
     res.json(user);
   } catch (error) {
     next(error);
@@ -102,7 +105,7 @@ const getMe = async (req, res, next) => {
 const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ where: { email } });
 
     if (!user) {
       res.status(404);
@@ -114,7 +117,7 @@ const forgotPassword = async (req, res, next) => {
 
     // Save token and expiry
     user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+    user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour from now
     await user.save();
 
     // Reset Link URL
@@ -179,8 +182,12 @@ const resetPassword = async (req, res, next) => {
     const { password } = req.body;
 
     const user = await User.findOne({
-      resetPasswordToken: token,
-      resetPasswordExpires: { $gt: Date.now() },
+      where: {
+        resetPasswordToken: token,
+        resetPasswordExpires: {
+          [Op.gt]: new Date()
+        }
+      }
     });
 
     if (!user) {
@@ -194,8 +201,8 @@ const resetPassword = async (req, res, next) => {
 
     // Update fields
     user.password = hashedPassword;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
     await user.save();
 
     res.json({ message: 'Password updated successfully! You can now log in.' });

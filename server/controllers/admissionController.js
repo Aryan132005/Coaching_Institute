@@ -1,5 +1,4 @@
-const Admission = require('../models/admission');
-const Course = require('../models/course');
+const { Admission, Course } = require('../config/db');
 
 // @desc    Submit a new online admission application
 // @route   POST /api/admissions
@@ -9,7 +8,7 @@ const submitAdmission = async (req, res, next) => {
     const { studentName, email, phone, courseId, documents } = req.body;
 
     // Check if course exists
-    const course = await Course.findById(courseId);
+    const course = await Course.findByPk(courseId);
     if (!course) {
       res.status(404);
       throw new Error('Course not found');
@@ -36,9 +35,16 @@ const submitAdmission = async (req, res, next) => {
 // @access  Private/Admin
 const getAdmissions = async (req, res, next) => {
   try {
-    const admissions = await Admission.find({})
-      .populate('courseId', 'title fees')
-      .sort({ appliedAt: -1 });
+    const admissions = await Admission.findAll({
+      include: [
+        {
+          model: Course,
+          as: 'course',
+          attributes: ['title', 'fees'],
+        },
+      ],
+      order: [['createdAt', 'DESC']],
+    });
 
     res.json(admissions);
   } catch (error) {
@@ -51,10 +57,17 @@ const getAdmissions = async (req, res, next) => {
 // @access  Private (Student)
 const getMyAdmissions = async (req, res, next) => {
   try {
-    // Retrieve admissions matching student's email
-    const admissions = await Admission.find({ email: req.user.email })
-      .populate('courseId', 'title fees category duration')
-      .sort({ appliedAt: -1 });
+    const admissions = await Admission.findAll({
+      where: { email: req.user.email },
+      include: [
+        {
+          model: Course,
+          as: 'course',
+          attributes: ['title', 'fees', 'category', 'duration'],
+        },
+      ],
+      order: [['createdAt', 'DESC']],
+    });
 
     res.json(admissions);
   } catch (error) {
@@ -74,13 +87,12 @@ const updateAdmissionStatus = async (req, res, next) => {
       throw new Error('Invalid status type. Must be pending, approved, or rejected.');
     }
 
-    const admission = await Admission.findById(req.params.id);
+    const admission = await Admission.findByPk(req.params.id);
 
     if (admission) {
       admission.status = status;
       const updatedAdmission = await admission.save();
 
-      // OPTIONAL BONUS FEATURE: Decoupled hook for email notification (printed to console here for demo)
       console.log(`[NOTIFICATION] Status of admission application for ${admission.studentName} updated to ${status}. Notification email triggered to ${admission.email}.`);
 
       res.json(updatedAdmission);

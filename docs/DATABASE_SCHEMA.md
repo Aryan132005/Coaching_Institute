@@ -1,6 +1,6 @@
 # Database Schema - Coaching Institute Portal
 
-This document outlines the MongoDB/JSON collections design, data types, validators, and relationships.
+This document outlines the MySQL/SQLite database schema design, data types, and relations configured via Sequelize ORM.
 
 ---
 

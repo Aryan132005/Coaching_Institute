@@ -1,29 +1,21 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
-const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const { connectDB } = require('./db');
-
-const User = require('../models/user');
-const Course = require('../models/course');
-const Faculty = require('../models/faculty');
-const Announcement = require('../models/announcement');
-const Enquiry = require('../models/enquiry');
-const Admission = require('../models/admission');
+const { connectDB, User, Course, Faculty, Announcement, Enquiry, Admission } = require('./db');
 
 const seedData = async () => {
   try {
     await connectDB();
     console.log('Connected to database for seeding...');
 
-    // Clear existing data
-    await User.deleteMany({});
-    await Course.deleteMany({});
-    await Faculty.deleteMany({});
-    await Announcement.deleteMany({});
-    await Enquiry.deleteMany({});
-    await Admission.deleteMany({});
-    console.log('Cleared existing collections.');
+    // Clear existing data in correct order of dependency
+    await Admission.destroy({ where: {} });
+    await Enquiry.destroy({ where: {} });
+    await Announcement.destroy({ where: {} });
+    await Faculty.destroy({ where: {} });
+    await Course.destroy({ where: {} });
+    await User.destroy({ where: {} });
+    console.log('Cleared existing database records.');
 
     // 1. Create Users
     const salt = await bcrypt.genSalt(10);
@@ -49,7 +41,7 @@ const seedData = async () => {
     console.log('Users created: Admin (admin@coaching.com) & Student (student@coaching.com)');
 
     // 2. Create Faculty
-    const faculties = await Faculty.insertMany([
+    await Faculty.bulkCreate([
       {
         name: 'Dr. Ramesh Sharma',
         subject: 'Physics',
@@ -87,7 +79,7 @@ const seedData = async () => {
     console.log('Faculty profiles seeded.');
 
     // 3. Create Courses
-        const courses = await Course.insertMany([
+    const courses = await Course.bulkCreate([
       {
         title: 'JEE Main & Advanced Crackers Program',
         description: 'Comprehensive 2-year classroom/online coaching program for JEE aspirants. Includes daily lectures, exhaustive study material, and weekly test series aligned with latest pattern.',
@@ -203,24 +195,21 @@ const seedData = async () => {
     console.log('Courses seeded.');
 
     // 4. Create Announcements
-    await Announcement.insertMany([
+    await Announcement.bulkCreate([
       {
         title: 'Scholarship Admission Test (SAT) 2026',
         description: 'Register for the SAT scheduled on August 10th, 2026. Get up to 100% tuition fee waiver for JEE and NEET programs. Registration closes on August 5th.',
         postedBy: admin._id,
-        date: new Date('2026-07-20'),
       },
       {
         title: 'New Full Stack Web Dev Batch Commencing',
         description: 'The upcoming batch for Full Stack Web Development starts on August 1st, 2026. Limited seats remain. Register through your student dashboard.',
         postedBy: admin._id,
-        date: new Date('2026-07-18'),
       },
       {
         title: 'Weekly Mock Test Results Published',
         description: 'Results for JEE Mock Test #12 and NEET Mock Test #8 are now live in the student panel. Review key answers and detailed reports.',
         postedBy: admin._id,
-        date: new Date('2026-07-15'),
       }
     ]);
 

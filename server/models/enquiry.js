@@ -1,36 +1,38 @@
-const mongoose = require('mongoose');
-const { getModel } = require('../config/db');
+const { DataTypes } = require('sequelize');
 
-const EnquirySchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    trim: true,
-    lowercase: true,
-  },
-  phone: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  message: {
-    type: String,
-    required: true,
-  },
-  status: {
-    type: String,
-    enum: ['pending', 'resolved'],
-    default: 'pending',
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
-
-module.exports = getModel('Enquiry', EnquirySchema);
+module.exports = (sequelize) => {
+  return sequelize.define('Enquiry', {
+    _id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      field: 'id',
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        isEmail: true,
+      },
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    message: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    status: {
+      type: DataTypes.ENUM('pending', 'resolved'),
+      defaultValue: 'pending',
+      allowNull: false,
+    },
+  }, {
+    tableName: 'enquiries',
+  });
+};
