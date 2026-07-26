@@ -18,7 +18,7 @@ const Footer = () => {
                 <GraduationCap className="w-6 h-6" />
               </div>
               <span className="font-extrabold text-xl tracking-tight">
-                Apex<span className="text-primary-400">Academy</span>
+                Apex <span className="text-primary-400">Academy</span>
               </span>
             </Link>
             <p className="text-sm leading-relaxed text-slate-400">

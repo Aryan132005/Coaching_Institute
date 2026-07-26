@@ -55,7 +55,7 @@ const Navbar = () => {
               <GraduationCap className="w-6 h-6" />
             </div>
             <span className="font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">
-              Apex<span className="text-primary-600">Academy</span>
+              Apex <span className="text-primary-600">Academy</span>
             </span>
           </Link>
 
