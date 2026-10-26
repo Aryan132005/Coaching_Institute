@@ -11,12 +11,14 @@ services:
     runtime: node
     plan: free
     rootDir: server
-    buildCommand: npm install
+    buildCommand: npm install && npm rebuild sqlite3 --build-from-source
     startCommand: node server.js
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
+      - key: NODE_VERSION
+        value: 20.18.0
       - key: PORT
         value: 10000
       - key: JWT_SECRET
@@ -43,6 +45,8 @@ services:
         source: /*
         destination: /index.html
     envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
       # Injects the backend's public HTTPS URL into Vite at build time
       - key: VITE_API_URL
         fromService:
