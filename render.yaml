@@ -1,0 +1,52 @@
+# Render Blueprint Specification for Coaching Institute
+# Deploys both Backend Web Service and Frontend Static Site
+# Automatically interconnects Frontend with Backend URL
+
+services:
+  # ========================================================
+  # 1. BACKEND API SERVICE (Express + Node.js)
+  # ========================================================
+  - type: web
+    name: coaching-institute-backend
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true
+      # Connects backend with frontend URL for CORS and password reset emails
+      - key: CLIENT_URL
+        fromService:
+          type: web
+          name: coaching-institute-frontend
+          envVarKey: RENDER_EXTERNAL_URL
+
+  # ========================================================
+  # 2. FRONTEND STATIC SITE (React + Vite SPA)
+  # ========================================================
+  - type: web
+    name: coaching-institute-frontend
+    runtime: static
+    plan: free
+    rootDir: client
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      # SPA Rewrite: Ensures page refreshes (e.g. /courses, /login) do not return 404
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      # Injects the backend's public HTTPS URL into Vite at build time
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: coaching-institute-backend
+          envVarKey: RENDER_EXTERNAL_URL

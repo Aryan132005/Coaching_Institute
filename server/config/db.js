@@ -60,6 +60,9 @@ const connectDB = async () => {
       username: user,
       password: pass,
       logging: false,
+      dialectOptions: {
+        connectTimeout: 3000,
+      },
     });
     
     await tempSequelize.authenticate();
@@ -114,6 +117,18 @@ const connectDB = async () => {
   // Sync database schema
   await sequelize.sync();
   console.log('Database models synchronized successfully.');
+
+  // Auto-seed default records if database is empty
+  try {
+    const userCount = await db.User.count();
+    if (userCount === 0) {
+      console.log('Empty database detected. Auto-seeding initial records...');
+      const { seedDefaults } = require('./autoSeed');
+      await seedDefaults(db);
+    }
+  } catch (seedErr) {
+    console.warn('Auto-seed check notice:', seedErr.message);
+  }
 };
 
 // Create a Proxy around Sequelize models to defer evaluation to request-time

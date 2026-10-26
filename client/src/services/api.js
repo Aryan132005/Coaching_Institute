@@ -1,8 +1,21 @@
 import axios from 'axios';
 
+// Automatically ensure base URL ends with /api without duplicate slashes
+const getBaseURL = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (!envUrl) {
+    return 'http://localhost:5000/api';
+  }
+  let cleanUrl = envUrl.trim().replace(/\/+$/, '');
+  if (!cleanUrl.endsWith('/api')) {
+    cleanUrl = `${cleanUrl}/api`;
+  }
+  return cleanUrl;
+};
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
-  timeout: 10000,
+  baseURL: getBaseURL(),
+  timeout: 45000, // Render free tier spins down on inactivity; allow up to 45s for spin up
 });
 
 // Request interceptor to attach JWT token

@@ -120,8 +120,11 @@ const forgotPassword = async (req, res, next) => {
     user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour from now
     await user.save();
 
-    // Reset Link URL
-    const resetUrl = `${req.protocol}://${req.get('host').replace('5000', '5173')}/reset-password/${resetToken}`;
+    // Reset Link URL (uses configured CLIENT_URL in production, or fallback to dev port replacement)
+    const clientBase = process.env.CLIENT_URL
+      ? process.env.CLIENT_URL.replace(/\/+$/, '')
+      : `${req.protocol}://${req.get('host').replace('5000', '5173')}`;
+    const resetUrl = `${clientBase}/reset-password/${resetToken}`;
 
     // Send email via nodemailer
     const emailUser = process.env.EMAIL_USER;
