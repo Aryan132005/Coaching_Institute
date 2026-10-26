@@ -1,7 +1,7 @@
 # Coaching Institute Management Portal - Apex Academy
 
 ## Live Deployment
-https://coaching-institute-indol.vercel.app/
+https://coaching-institute-frontend.onrender.com
 
 A complete, production-ready full-stack website and administration management portal for a coaching institute. The project supports course listings, online student registration/admissions, campus notices/announcements, visitor enquiries, and role-based administration guards.
 
